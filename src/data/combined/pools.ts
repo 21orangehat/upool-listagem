@@ -6,6 +6,7 @@ import { PoolData } from 'state/pools/reducer'
 import { get2DayChange } from 'utils/data'
 import { formatTokenName, formatTokenSymbol } from 'utils/tokens'
 import { useActiveNetworkVersion, useClients } from 'state/application/hooks'
+import { getMultiplier } from 'utils/getMultiplier'
 
 export const POOLS_BULK = (block: number | undefined, pools: string[]) => {
   let poolString = `[`
@@ -197,24 +198,11 @@ export function usePoolDatas(
     const tvlToken1 = current ? parseFloat(current.totalValueLockedToken1) : 0
 
     const feeTier = current ? parseInt(current.feeTier) : 0
-    
-    // Extras
+
+    // Calculando o volumeAverage
     const volumeAverage = current ? volumeUSDWeek / 7 : 0
-    const result: number = volumeUSD / tvlUSD
-    let multiplier: number | string = 0
-
-    if (current.feeTier === '1000') {
-      multiplier = result * 20
-    } else if (current.feeTier === '3000') {
-      multiplier = result * 6
-    } else if (current.feeTier === '500') {
-      multiplier = result
-    } else if (current.feeTier === '100') {
-      multiplier = result
-    }
-
-    multiplier = parseFloat(multiplier.toString()).toPrecision(3).toString()
-  
+    // Calculando o multiplier
+    const multiplier: string = getMultiplier(current.feeTier, volumeUSD, tvlUSD)
 
     if (current) {
       accum[address] = {

@@ -1,6 +1,7 @@
 {
   "name": "@uniswap/interface",
   "description": "Uniswap Interface",
+  "license": "GPL-3.0-or-later",
   "homepage": ".",
   "private": true,
   "devDependencies": {
@@ -130,7 +131,6 @@
       "last 1 safari version"
     ]
   },
-  "license": "GPL-3.0-or-later",
   "dependencies": {
     "@apollo/client": "^3.3.15",
     "@data-ui/histogram": "^0.0.84",
