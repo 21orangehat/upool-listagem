@@ -106,14 +106,18 @@ export function usePoolDatas(
   const [activeNetwork] = useActiveNetworkVersion()
 
   // get blocks from historic timestamps
-  const [t24, t48, tWeek] = useDeltaTimestamps()
-  const { blocks, error: blockError } = useBlocksFromTimestamps([t24, t48, tWeek])
-  const [block24, block48, blockWeek] = blocks ?? []
+  const [h2, t24, t48, tWeek] = useDeltaTimestamps()
+  const { blocks, error: blockError } = useBlocksFromTimestamps([h2, t24, t48, tWeek])
+  const [block2h, block24, block48, blockWeek] = blocks ?? []
 
   const { loading, error, data } = useQuery<PoolDataResponse>(POOLS_BULK(undefined, poolAddresses), {
     client: dataClient,
   })
 
+  const { loading: loading2h, error: error2h, data: data2h } = useQuery<PoolDataResponse>(
+    POOLS_BULK(block2h?.number, poolAddresses),
+    { client: dataClient }
+  )
   const { loading: loading24, error: error24, data: data24 } = useQuery<PoolDataResponse>(
     POOLS_BULK(block24?.number, poolAddresses),
     { client: dataClient }
@@ -127,8 +131,8 @@ export function usePoolDatas(
     { client: dataClient }
   )
 
-  const anyError = Boolean(error || error24 || error48 || blockError || errorWeek)
-  const anyLoading = Boolean(loading || loading24 || loading48 || loadingWeek)
+  const anyError = Boolean(error || error2h || error24 || error48 || blockError || errorWeek)
+  const anyLoading = Boolean(loading || loading2h || loading24 || loading48 || loadingWeek)
 
   // return early if not all data yet
   if (anyError || anyLoading) {
@@ -141,6 +145,12 @@ export function usePoolDatas(
 
   const parsed = data?.pools
     ? data.pools.reduce((accum: { [address: string]: PoolFields }, poolData) => {
+        accum[poolData.id] = poolData
+        return accum
+      }, {})
+    : {}
+  const parsed2h = data2h?.pools
+    ? data2h.pools.reduce((accum: { [address: string]: PoolFields }, poolData) => {
         accum[poolData.id] = poolData
         return accum
       }, {})
@@ -167,6 +177,7 @@ export function usePoolDatas(
   // format data and calculate daily changes
   const formatted = poolAddresses.reduce((accum: { [address: string]: PoolData }, address) => {
     const current: PoolFields | undefined = parsed[address]
+    const twoHour: PoolFields | undefined = parsed2h[address]
     const oneDay: PoolFields | undefined = parsed24[address]
     const twoDay: PoolFields | undefined = parsed48[address]
     const week: PoolFields | undefined = parsedWeek[address]
@@ -181,6 +192,13 @@ export function usePoolDatas(
     const volumeUSDWeek =
       current && week
         ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD)
+        : current
+        ? parseFloat(current.volumeUSD)
+        : 0
+
+    const volumeUSD2Hour =
+      current && twoHour
+        ? parseFloat(current.volumeUSD) - parseFloat(twoHour.volumeUSD)
         : current
         ? parseFloat(current.volumeUSD)
         : 0
@@ -236,6 +254,7 @@ export function usePoolDatas(
         tvlToken1,
         multiplier: parseFloat(multiplier),
         volumeAverage: volumeAverage,
+        volumeUSD2Hour: volumeUSD2Hour,
       }
     }
 

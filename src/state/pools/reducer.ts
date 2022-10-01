@@ -58,6 +58,7 @@ export interface PoolData {
   //extras
   multiplier: number
   volumeAverage: number
+  volumeUSD2Hour: number
 }
 
 export type PoolChartEntry = {
