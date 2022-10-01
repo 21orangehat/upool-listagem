@@ -4,6 +4,7 @@ import { OutlineCard, GreyBadge } from 'components/Card'
 import { PageWrapper } from 'pages/styled'
 import { TYPE } from 'theme'
 import { AutoColumn } from 'components/Column'
+import PixIMG from '../../assets/images/pix.png'
 
 const WarningWrapper = styled.div`
   width: 100%;
@@ -28,10 +29,8 @@ const Credit = () => {
               <TYPE.main>0x4cb1F59c8ba09fED2BCE70943d2ad5dEc599e7d8</TYPE.main>
             </GreyBadge>
             <TYPE.main>&nbsp;</TYPE.main>
-            <TYPE.main fontSize="12px">GitHub:</TYPE.main>
-            <a href="https://github.com/21orangehat/upool-listagem.git" target="_blank" rel="noreferrer">
-              <TYPE.main fontSize="12px">Contribua com o projeto</TYPE.main>
-            </a>
+            <TYPE.main fontSize="12px">PIX</TYPE.main>
+            <img width={'50%'} src={PixIMG} alt="PIX" />
           </OutlineCard>
         </AutoColumn>
         <Margem />
@@ -42,6 +41,11 @@ const Credit = () => {
             <GreyBadge fontSize="12px">
               <TYPE.main>info@orangehat.wtf</TYPE.main>
             </GreyBadge>
+            <TYPE.main>&nbsp;</TYPE.main>
+            <TYPE.main fontSize="12px">GitHub:</TYPE.main>
+            <a href="https://github.com/21orangehat/upool-listagem.git" target="_blank" rel="noreferrer">
+              <TYPE.main fontSize="12px">Contribua com o projeto</TYPE.main>
+            </a>
           </OutlineCard>
         </AutoColumn>
       </WarningWrapper>
