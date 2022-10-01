@@ -17,7 +17,7 @@ export const POOLS_BULK = (block: number | undefined, pools: string[]) => {
   const queryString =
     `
     query pools {
-      pools(where: {id_in: ${poolString}},` +
+      pools(first: 100, where: {id_in: ${poolString}},` +
     (block ? `block: {number: ${block}} ,` : ``) +
     ` orderBy: totalValueLockedUSD, orderDirection: desc, subgraphError: allow) {
         id
@@ -81,6 +81,8 @@ interface PoolFields {
   totalValueLockedUSD: string
   multiplier: string
   volumeAverage: string
+  volumeUSD2H: string
+  volumeUSD48H: string
 }
 
 interface PoolDataResponse {
@@ -196,9 +198,16 @@ export function usePoolDatas(
         ? parseFloat(current.volumeUSD)
         : 0
 
-    const volumeUSD2Hour =
+    const volumeUSD2H =
       current && twoHour
         ? parseFloat(current.volumeUSD) - parseFloat(twoHour.volumeUSD)
+        : current
+        ? parseFloat(current.volumeUSD)
+        : 0
+
+    const volumeUSD48H =
+      current && twoDay
+        ? parseFloat(current.volumeUSD) - parseFloat(twoDay.volumeUSD)
         : current
         ? parseFloat(current.volumeUSD)
         : 0
@@ -254,7 +263,8 @@ export function usePoolDatas(
         tvlToken1,
         multiplier: parseFloat(multiplier),
         volumeAverage: volumeAverage,
-        volumeUSD2Hour: volumeUSD2Hour,
+        volumeUSD2H: volumeUSD2H,
+        volumeUSD48H: volumeUSD48H,
       }
     }
 

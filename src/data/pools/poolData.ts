@@ -81,7 +81,7 @@ interface PoolFields {
   totalValueLockedUSD: string
   multiplier: string
   volumeAverage: string
-  volumeUSD2Hour: string
+  volumeUSD2H: string
 }
 
 interface PoolDataResponse {
@@ -196,7 +196,14 @@ export function usePoolDatas(
         ? parseFloat(current.volumeUSD)
         : 0
 
-    const volumeUSD2Hour =
+    const volumeUSD48H =
+      current && twoDay
+        ? parseFloat(current.volumeUSD) - parseFloat(twoDay.volumeUSD)
+        : current
+        ? parseFloat(current.volumeUSD)
+        : 0
+
+    const volumeUSD2H =
       current && twoHour
         ? parseFloat(current.volumeUSD) - parseFloat(twoHour.volumeUSD)
         : current
@@ -254,7 +261,8 @@ export function usePoolDatas(
         tvlToken1,
         multiplier: parseFloat(multiplier),
         volumeAverage,
-        volumeUSD2Hour: volumeUSD2Hour,
+        volumeUSD2H: volumeUSD2H,
+        volumeUSD48H: volumeUSD48H,
       }
     }
 

@@ -29,7 +29,7 @@ const ResponsiveGrid = styled.div`
   grid-gap: 1em;
   align-items: center;
 
-  grid-template-columns: 20px 0.5fr repeat(5, 0.3fr);
+  grid-template-columns: 5px 0.6fr repeat(6, 0.3fr);
 
   @media screen and (max-width: 900px) {
     grid-template-columns: 20px 1.5fr repeat(2, 1fr);
@@ -74,8 +74,9 @@ const SORT_FIELD = {
   feeTier: 'feeTier',
   volumeUSD: 'volumeUSD',
   tvlUSD: 'tvlUSD',
-  volumeUSD2h: 'volumeUSD2h',
+  volumeUSD2H: 'volumeUSD2H',
   volumeUSDWeek: 'volumeUSDWeek',
+  volumeUSD48H: 'volumeUSD48H',
   volumeAverage: 'volumeAverage',
   multiplier: 'multiplier',
 }
@@ -108,6 +109,12 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
               </RowFixed>
             </Label>
             <Label fontWeight={400}>{formatDollarAmount(poolData.tvlUSD)}</Label>
+            <div>
+              <Label fontWeight={400}>{formatDollarAmount(poolData.volumeUSD2H)}</Label>
+              <SpanSmall data-tip="Multiplicador Volume 2H">
+                ({getMultiplier(poolData.feeTier.toString(), poolData.volumeUSD2H, poolData.tvlUSD)})
+              </SpanSmall>
+            </div>
             <div>
               <Label fontWeight={400}>{formatDollarAmount(poolData.volumeUSD)}</Label>
               <SpanSmall data-tip="Multiplicador Volume 24H">
@@ -210,30 +217,43 @@ export default function PoolTable({ poolDatas, maxItems = MAX_ITEMS }: { poolDat
           {sortedPools.length > 0 ? (
             <AutoColumn gap="16px">
               <ResponsiveGrid>
-                <Label color={theme.text2}>#</Label>
-                <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.feeTier)}>
+                <Label color={theme.text2} fontWeight={400}>
+                  #
+                </Label>
+                <ClickableText color={theme.text2} fontWeight={400} onClick={() => handleSort(SORT_FIELD.feeTier)}>
                   Pool {arrow(SORT_FIELD.feeTier)}
                 </ClickableText>
-                <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
+                <ClickableText color={theme.text2} fontWeight={400} onClick={() => handleSort(SORT_FIELD.tvlUSD)}>
                   TVL {arrow(SORT_FIELD.tvlUSD)}
                 </ClickableText>
-                <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
+                <ClickableText color={theme.text2} fontWeight={400} onClick={() => handleSort(SORT_FIELD.volumeUSD2H)}>
+                  Volume 2H {arrow(SORT_FIELD.volumeUSD2H)}
+                </ClickableText>
+                <ClickableText color={theme.text2} fontWeight={400} onClick={() => handleSort(SORT_FIELD.volumeUSD)}>
                   Volume 24H {arrow(SORT_FIELD.volumeUSD)}
                 </ClickableText>
-                <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}>
+                <ClickableText
+                  color={theme.text2}
+                  fontWeight={400}
+                  onClick={() => handleSort(SORT_FIELD.volumeUSDWeek)}
+                >
                   Volume 7D {arrow(SORT_FIELD.volumeUSDWeek)}
                 </ClickableText>
-                <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.volumeAverage)}>
+                <ClickableText
+                  color={theme.text2}
+                  fontWeight={400}
+                  onClick={() => handleSort(SORT_FIELD.volumeAverage)}
+                >
                   Média Diária {arrow(SORT_FIELD.volumeAverage)}
                 </ClickableText>
-                <ClickableText color={theme.text2} onClick={() => handleSort(SORT_FIELD.multiplier)}>
-                  Multiplicador V24H {arrow(SORT_FIELD.multiplier)}
+                <ClickableText color={theme.text2} fontWeight={400} onClick={() => handleSort(SORT_FIELD.multiplier)}>
+                  Multip. 24H {arrow(SORT_FIELD.multiplier)}
                 </ClickableText>
               </ResponsiveGrid>
               <Break />
               {sortedPools.map((poolData, i) => {
                 if (poolData) {
-                  // console.log('Liquidity: ' + JSON.stringify(poolData.liquidity))
+                  //console.log('poolDayData ' + JSON.stringify(poolData.poolDayData))
                   return (
                     <React.Fragment key={i}>
                       <DataRow index={(page - 1) * MAX_ITEMS + i} poolData={poolData} />

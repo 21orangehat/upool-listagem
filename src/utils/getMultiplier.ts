@@ -16,5 +16,5 @@ export function getMultiplier(feeTier: string, volumeUSD: number, tvlUSD: number
     multiplier = result / 5
   }
 
-  return parseFloat(multiplier.toString()).toPrecision(3).toString()
+  return multiplier.toFixed(2)
 }
