@@ -18,6 +18,7 @@ import { networkPrefix } from 'utils/networkPrefix'
 import { useActiveNetworkVersion } from 'state/application/hooks'
 import ReactTooltip from 'react-tooltip'
 import { ButtonPrimary } from 'components/Button'
+import { getMultiplier } from 'utils/getMultiplier'
 
 const Wrapper = styled(DarkGreyCard)`
   width: 100%;
@@ -73,27 +74,10 @@ const SORT_FIELD = {
   feeTier: 'feeTier',
   volumeUSD: 'volumeUSD',
   tvlUSD: 'tvlUSD',
+  volumeUSD2h: 'volumeUSD2h',
   volumeUSDWeek: 'volumeUSDWeek',
   volumeAverage: 'volumeAverage',
   multiplier: 'multiplier',
-}
-
-const getMultiplier = (feeTier: string, volume: number, tvlUSD: number) => {
-  // Calculando o Multiplier baseado nos outros volumes
-  const result: number = volume / tvlUSD
-  let multiplier: number | string = 0
-
-  if (feeTier === '1000') {
-    multiplier = result * 20
-  } else if (feeTier === '3000') {
-    multiplier = result * 6
-  } else if (feeTier === '500') {
-    multiplier = result
-  } else if (feeTier === '100') {
-    multiplier = result
-  }
-
-  return parseFloat(multiplier.toString()).toPrecision(3).toString()
 }
 
 const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => {
