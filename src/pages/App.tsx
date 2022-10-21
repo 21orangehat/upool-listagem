@@ -15,6 +15,7 @@ import { useActiveNetworkVersion, useSubgraphStatus } from 'state/application/ho
 import { DarkGreyCard } from 'components/Card'
 import { SUPPORTED_NETWORK_VERSIONS, EthereumNetworkInfo, OptimismNetworkInfo } from 'constants/networks'
 import Credit from '../components/Credit'
+import './styles.css'
 
 const AppWrapper = styled.div`
   display: flex;

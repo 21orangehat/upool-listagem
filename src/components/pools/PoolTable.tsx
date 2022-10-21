@@ -1,5 +1,5 @@
 import React, { useCallback, Suspense, useState, useMemo, useEffect } from 'react'
-import styled from 'styled-components'
+import styled, { withTheme } from 'styled-components'
 import { Link } from 'react-router-dom'
 import { TYPE } from 'theme'
 import { DarkGreyCard, GreyBadge } from 'components/Card'
@@ -82,6 +82,11 @@ const SORT_FIELD = {
 }
 
 const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => {
+  let temSimetria = false
+  if (poolData.volumeUSD > poolData.tvlUSD) {
+    temSimetria = true
+  }
+
   const [activeNetwork] = useActiveNetworkVersion()
   // pretend load buffer
   const [loading, setLoading] = useState(true)
@@ -95,7 +100,7 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
       ) : (
         <LinkWrapper to={networkPrefix(activeNetwork) + 'pools/' + poolData.address}>
           <ReactTooltip />
-          <ResponsiveGrid>
+          <ResponsiveGrid className={temSimetria ? 'simetria' : ''}>
             <Label fontWeight={400}>{index + 1}</Label>
             <Label fontWeight={400}>
               <RowFixed>
