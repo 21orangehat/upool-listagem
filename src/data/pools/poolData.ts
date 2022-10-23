@@ -227,7 +227,7 @@ export function usePoolDatas(
     // Calculando o volumeAverage
     const volumeAverage = current ? volumeUSDWeek / 7 : 0
     // Calculando o multiplier
-    const multiplier: string = getMultiplier(current.feeTier, volumeUSD, tvlUSD)
+    const multiplier: string = current ? getMultiplier(current.feeTier, volumeUSD, tvlUSD) : '0'
 
     if (current) {
       accum[address] = {
