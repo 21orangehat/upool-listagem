@@ -82,9 +82,10 @@ const SORT_FIELD = {
 }
 
 const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => {
-  let temSimetria = false
+  // Destaca assimetria
+  let temAssimetria = false
   if (poolData.volumeUSD > poolData.tvlUSD) {
-    temSimetria = true
+    temAssimetria = true
   }
 
   const [activeNetwork] = useActiveNetworkVersion()
@@ -100,7 +101,7 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
       ) : (
         <LinkWrapper to={networkPrefix(activeNetwork) + 'pools/' + poolData.address}>
           <ReactTooltip />
-          <ResponsiveGrid className={temSimetria ? 'simetria' : ''}>
+          <ResponsiveGrid className={temAssimetria ? 'simetria' : ''}>
             <Label fontWeight={400}>{index + 1}</Label>
             <Label fontWeight={400}>
               <RowFixed>
@@ -146,7 +147,7 @@ const DataRow = ({ poolData, index }: { poolData: PoolData; index: number }) => 
   )
 }
 
-const MAX_ITEMS = 5
+const MAX_ITEMS = 7
 
 export default function PoolTable({ poolDatas, maxItems = MAX_ITEMS }: { poolDatas: PoolData[]; maxItems?: number }) {
   const [activeNetwork] = useActiveNetworkVersion()
