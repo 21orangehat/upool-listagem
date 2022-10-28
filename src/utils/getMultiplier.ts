@@ -1,8 +1,9 @@
 export function getMultiplier(feeTier: string, volumeUSD: number, tvlUSD: number): string {
   const result: number = volumeUSD / tvlUSD
   let multiplier = 0
+  //console.log('feeTier:' + feeTier)
 
-  if (feeTier === '1000') {
+  if (feeTier === '10000') {
     //1%
     multiplier = result * 20
   } else if (feeTier === '3000') {
