@@ -4,6 +4,7 @@ import weekOfYear from 'dayjs/plugin/weekOfYear'
 import gql from 'graphql-tag'
 import { PoolChartEntry } from 'state/pools/reducer'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { getMultiplier } from 'utils/getMultiplier'
 
 // format dayjs with the libraries that we need
 dayjs.extend(utc)
@@ -24,6 +25,9 @@ const POOL_CHART = gql`
       volumeUSD
       tvlUSD
       feesUSD
+      pool {
+        feeTier
+      }
     }
   }
 `
@@ -34,6 +38,10 @@ interface ChartResults {
     volumeUSD: string
     tvlUSD: string
     feesUSD: string
+    multiplier: string
+    pool: {
+      feeTier: string
+    }
   }[]
 }
 
@@ -43,6 +51,10 @@ export async function fetchPoolChartData(address: string, client: ApolloClient<N
     volumeUSD: string
     tvlUSD: string
     feesUSD: string
+    multiplier: string
+    pool: {
+      feeTier: string
+    }
   }[] = []
   const startTimestamp = 1619170975
   const endTimestamp = dayjs.utc().unix()
@@ -84,6 +96,12 @@ export async function fetchPoolChartData(address: string, client: ApolloClient<N
         volumeUSD: parseFloat(dayData.volumeUSD),
         totalValueLockedUSD: parseFloat(dayData.tvlUSD),
         feesUSD: parseFloat(dayData.feesUSD),
+        multiplier: getMultiplier(
+          dayData.pool.feeTier,
+          parseFloat(dayData.volumeUSD),
+          parseFloat(dayData.tvlUSD),
+          dayData.date
+        ),
       }
       return accum
     }, {})
@@ -102,6 +120,7 @@ export async function fetchPoolChartData(address: string, client: ApolloClient<N
           volumeUSD: 0,
           totalValueLockedUSD: latestTvl,
           feesUSD: 0,
+          multiplier: '0',
         }
       } else {
         latestTvl = formattedExisting[currentDayIndex].totalValueLockedUSD

@@ -72,6 +72,7 @@ enum ChartView {
   PRICE,
   DENSITY,
   FEES,
+  MULTIPLIER,
 }
 
 export default function PoolPage({
@@ -130,6 +131,19 @@ export default function PoolPage({
         return {
           time: unixToDate(day.date),
           value: day.feesUSD,
+        }
+      })
+    } else {
+      return []
+    }
+  }, [chartData])
+
+  const formattedMultiplier = useMemo(() => {
+    if (chartData) {
+      return chartData.map((day) => {
+        return {
+          time: unixToDate(day.date),
+          value: day.multiplier,
         }
       })
     } else {
@@ -277,12 +291,16 @@ export default function PoolPage({
                 <AutoColumn>
                   <TYPE.label fontSize="24px" height="30px">
                     <MonoSpace>
-                      {latestValue
+                      {latestValue && view !== ChartView.MULTIPLIER
                         ? formatDollarAmount(latestValue)
+                        : latestValue && view === ChartView.MULTIPLIER
+                        ? latestValue
                         : view === ChartView.VOL
                         ? formatDollarAmount(formattedVolumeData[formattedVolumeData.length - 1]?.value)
                         : view === ChartView.DENSITY
                         ? ''
+                        : view === ChartView.MULTIPLIER
+                        ? formattedMultiplier[formattedMultiplier.length - 1]?.value
                         : formatDollarAmount(formattedTvlData[formattedTvlData.length - 1]?.value)}{' '}
                     </MonoSpace>
                   </TYPE.label>
@@ -290,7 +308,7 @@ export default function PoolPage({
                     {valueLabel ? <MonoSpace>{valueLabel} (UTC)</MonoSpace> : ''}
                   </TYPE.main>
                 </AutoColumn>
-                <ToggleWrapper width="240px">
+                <ToggleWrapper width="300px">
                   <ToggleElementFree
                     isActive={view === ChartView.VOL}
                     fontSize="12px"
@@ -309,7 +327,9 @@ export default function PoolPage({
                     <ToggleElementFree
                       isActive={view === ChartView.DENSITY}
                       fontSize="12px"
-                      onClick={() => (view === ChartView.DENSITY ? setView(ChartView.VOL) : setView(ChartView.DENSITY))}
+                      onClick={() =>
+                        view === ChartView.DENSITY ? setView(ChartView.FEES) : setView(ChartView.DENSITY)
+                      }
                     >
                       Liquidity
                     </ToggleElementFree>
@@ -317,9 +337,18 @@ export default function PoolPage({
                   <ToggleElementFree
                     isActive={view === ChartView.FEES}
                     fontSize="12px"
-                    onClick={() => (view === ChartView.FEES ? setView(ChartView.TVL) : setView(ChartView.FEES))}
+                    onClick={() => (view === ChartView.FEES ? setView(ChartView.MULTIPLIER) : setView(ChartView.FEES))}
                   >
                     Fees
+                  </ToggleElementFree>
+                  <ToggleElementFree
+                    isActive={view === ChartView.MULTIPLIER}
+                    fontSize="12px"
+                    onClick={() =>
+                      view === ChartView.MULTIPLIER ? setView(ChartView.VOL) : setView(ChartView.MULTIPLIER)
+                    }
+                  >
+                    Multiplier
                   </ToggleElementFree>
                 </ToggleWrapper>
               </ToggleRow>
@@ -346,6 +375,16 @@ export default function PoolPage({
               ) : view === ChartView.FEES ? (
                 <BarChart
                   data={formattedFeesUSD}
+                  color={backgroundColor}
+                  minHeight={340}
+                  setValue={setLatestValue}
+                  setLabel={setValueLabel}
+                  value={latestValue}
+                  label={valueLabel}
+                />
+              ) : view === ChartView.MULTIPLIER ? (
+                <LineChart
+                  data={formattedMultiplier}
                   color={backgroundColor}
                   minHeight={340}
                   setValue={setLatestValue}
